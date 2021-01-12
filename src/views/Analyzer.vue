@@ -2,7 +2,7 @@
   <div
     id="network"
     ref="graph"
-    class="w-11/12 my-auto mx-auto bg-gray-100 border-solid border-black border-2"
+    class="w-11/12 my-auto mx-auto bg-gray-100 border-solid border-black border-2 text-center"
     style="height: 87%;"
     @drop.prevent="readFile"
     @dragenter.prevent=""

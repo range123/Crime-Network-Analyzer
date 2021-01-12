@@ -1,5 +1,5 @@
 <template>
-  <nav class="bg-gray-800">
+  <nav class="bg-gray-800 w-full">
     <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
       <div class="relative flex items-center justify-between h-16">
         <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -61,7 +61,7 @@
           <div class="flex-shrink-0 flex items-center">
             <img
               class="block h-8 w-auto"
-              src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg"
+              src="../assets/imgs/icon.svg"
               alt="Crime Network Analyzer"
             />
             <router-link
@@ -94,22 +94,13 @@
                 "
                 >Tutorial</router-link
               >
-              <router-link
-                to="/about"
-                class="px-3 py-2 rounded-md text-lg font-medium"
-                :class="
-                  currentRoute === 'About'
-                    ? 'bg-gray-900 text-white '
-                    : 'text-gray-300  hover:bg-gray-700  hover:text-white'
-                "
-                >About</router-link
-              >
 
-              <!-- <a
-                href="#"
-                class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                >Calendar</a
-              > -->
+              <a
+                href="https://github.com/range123/Crime-Network-Analyzer"
+                class=" px-3 py-2 rounded-md text-lg font-medium text-gray-300  hover:bg-gray-700 hover:text-white"
+                target="_blank"
+                >GitHub</a
+              >
             </div>
           </div>
         </div>
@@ -128,70 +119,30 @@
               viewBox="0 0 24 24"
               stroke="currentColor"
               aria-hidden="true"
+              v-if="deferedPrompt"
+              @click="install"
             >
+              <path d="M0 0h24v24H0z" fill="none" />
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
               />
             </svg>
           </button>
 
           <!-- Profile dropdown -->
-          <div class="ml-3 relative">
-            <div>
-              <button
-                class="bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
-                id="user-menu"
-                aria-haspopup="true"
-                @click="() => (isProfileOpen = !isProfileOpen)"
-              >
-                <span class="sr-only">Open user menu</span>
-                <img
-                  class="h-8 w-8 rounded-full"
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                  alt=""
-                />
-              </button>
-            </div>
-            <!--
-            Profile dropdown panel, show/hide based on dropdown state.
-
-            Entering: "transition ease-out duration-100"
-              From: "transform opacity-0 scale-95"
-              To: "transform opacity-100 scale-100"
-            Leaving: "transition ease-in duration-75"
-              From: "transform opacity-100 scale-100"
-              To: "transform opacity-0 scale-95"
-          -->
-            <div
-              class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5"
-              role="menu"
-              aria-orientation="vertical"
-              aria-labelledby="user-menu"
-              :class="isProfileOpen ? '' : 'hidden'"
-            >
-              <a
-                href="#"
-                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                role="menuitem"
-                >Your Profile</a
-              >
-              <a
-                href="#"
-                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                role="menuitem"
-                >Settings</a
-              >
-              <a
-                href="#"
-                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                role="menuitem"
-                >Sign out</a
-              >
-            </div>
-          </div>
+          <router-link
+            to="/about"
+            class="px-3 py-2 rounded-md text-lg font-medium"
+            :class="
+              currentRoute === 'About'
+                ? 'bg-gray-900 text-white '
+                : 'text-gray-300  hover:bg-gray-700  hover:text-white'
+            "
+            >About</router-link
+          >
         </div>
       </div>
     </div>
@@ -224,15 +175,11 @@
           "
           >Tutorial</router-link
         >
-        <router-link
-          to="/about"
-          class=" px-3 py-2 rounded-md text-base font-medium block"
-          :class="
-            currentRoute === 'About'
-              ? 'bg-gray-900 text-white'
-              : 'text-gray-300  hover:bg-gray-700 hover:text-white '
-          "
-          >About</router-link
+        <a
+          href="https://github.com/range123/Crime-Network-Analyzer"
+          class=" px-3 py-2 rounded-md text-base font-medium block text-gray-300  hover:bg-gray-700 hover:text-white"
+          target="_blank"
+          >GitHub</a
         >
       </div>
     </div>
@@ -245,12 +192,27 @@ export default {
   data() {
     return {
       isMenuOpen: false,
-      isProfileOpen: false
+      isProfileOpen: false,
+      deferedPrompt: null
     };
+  },
+  created() {
+    window.addEventListener("beforeinstallprompt", e => {
+      e.preventDefault();
+      this.deferedPrompt = e;
+    });
+    window.addEventListener("appinstalled", () => {
+      this.deferedPrompt = null;
+    });
   },
   computed: {
     currentRoute() {
       return this.$route.name;
+    }
+  },
+  methods: {
+    install() {
+      this.deferedPrompt.prompt();
     }
   }
 };
