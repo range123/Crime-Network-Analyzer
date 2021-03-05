@@ -1,4 +1,10 @@
 <template>
+  <select name="Option" id="dropdown" @change="handleChoice($event)">
+    <option value="Default"> Default </option>
+    <option value="Betweenness">Betweenness</option>
+    <option value="Closeness & Degree">Closeness & Degree</option>
+    <option value="Both"> Both </option>
+  </select>
   <div
     id="network"
     ref="graph"
@@ -85,6 +91,7 @@ export default {
   name: "Analyzer",
   data() {
     return {
+      prevE: null,
       selected: 0,
       nodes: [
         {
@@ -131,6 +138,15 @@ export default {
     this.render();
   },
   methods: {
+    handleChoice(e) {
+      if (e.target.value.startsWith("Both")) {
+        this.tempRender(this.prevFile, 3);
+      } else if (e.target.value.startsWith("Betweenness")) {
+        this.tempRender(this.prevFile, 2);
+      } else if (e.target.value.startsWith("Closeness")) {
+        this.tempRender(this.prevFile, 1);
+      } else this.tempRender(this.prevFile, 0);
+    },
     render() {
       if (this.network) this.network.destroy;
       this.network = new Network(
@@ -143,14 +159,11 @@ export default {
         this.showModal = x ? true : false;
       });
     },
-    readFile(e) {
-      const files = e.dataTransfer.files;
-      if (files.length != 1) {
-        this.Toast.error("Accepts only one file");
-        return;
-      }
+    tempRender(rfile, choice) {
+      this.prevFile = rfile;
+
       const graph = createGraph();
-      const file = files[0];
+      const file = rfile;
       const txtreader = new FileReader();
       txtreader.onload = f => {
         if (f.target?.result) {
@@ -258,11 +271,11 @@ export default {
               label: node.name,
               id: node.id,
               shape: "hexagon",
-              value: degree[node.id],
-              color: tempColor,
+              value: choice == 1 || choice == 3 ? degree[node.id] : 30,
+              color: choice == 2 || choice == 3 ? tempColor : color,
               scaling,
               title: node.name,
-              mass: massmap(degree[node.id])
+              mass: choice == 1 || choice == 3 ? massmap(degree[node.id]) : 20
             });
           });
           this.nodes = nodes;
@@ -279,6 +292,15 @@ export default {
       } else {
         this.Toast.error("Accepts only json");
       }
+    },
+    readFile(e) {
+      const files = e.dataTransfer.files;
+      console.log(files);
+      if (files.length != 1) {
+        this.Toast.error("Accepts only one file");
+        return;
+      }
+      this.tempRender(files[0], 0);
     }
   }
 };
