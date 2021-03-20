@@ -115,7 +115,11 @@ export default {
           borderWidth: 4
         },
         edges: {
-          color: "lightgray"
+          color: {
+            color: "darkblue",
+            highlight: "darkred"
+          },
+          width: 5
         },
         physics: {
           enabled: true,
@@ -155,7 +159,10 @@ export default {
         this.options
       );
       this.network.on("selectNode", x => {
-        this.selected = x.nodes[0] - 1;
+        const temp = x.nodes[0];
+        this.nodes.forEach((node, ind) => {
+          if (node.id == temp) this.selected = ind;
+        });
         this.showModal = x ? true : false;
       });
     },
